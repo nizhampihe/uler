@@ -4,7 +4,7 @@
  * / /__/ / / _ \/ *\         *
  * \_____/ / /__/ /\/         *
  *  ULER \ \_____/            *
- *   GAME \___/ v1.0.0-beta   *
+ *   GAME \___/ v1.0.0        *
  *                            *
  *        (c) 2019 NizhamPihe *
  *-=----=----=----=----=----=-*/
@@ -54,7 +54,7 @@ typedef struct
 /*-=----=----=----=----=----=-*/
 
 void up (int h)
-{
+{ /*Reset Layar*/
   COORD loc ;
   CONSOLE_SCREEN_BUFFER_INFO
     csbi ;
@@ -77,7 +77,7 @@ void up (int h)
 }
 
 void inisiasi ()
-{
+{ /*Awal Program*/
   CONSOLE_CURSOR_INFO cinfo ;
   
   GetConsoleCursorInfo (
@@ -99,7 +99,7 @@ void inisiasi ()
 }
 
 void terminasi ()
-{
+{ /*Akhir Program*/
   CONSOLE_CURSOR_INFO cinfo ;
   
   GetConsoleCursorInfo (
@@ -125,7 +125,7 @@ void cetak (ITM *papan,
             int  h,
             int  w,
             MDE  mode)
-{
+{ /*Menampilkan Layar*/
   int i, j, s = 4 ;
   ITM a, b ;
   
@@ -215,7 +215,7 @@ ITM jalan (int  a,
            LOC *loc,
            ITM *papan,
            int  w)
-{
+{ /*Gerak Ular*/
   ITM b ;
   LOC temp = *loc ;
   
@@ -326,9 +326,9 @@ void mulai (int u,
   getch () ;
   
   do
-  {
+  { /*Game Loop*/
     if (kbhit ())
-    {
+    { /*Input Keyboard*/
       switch (getch ())
       {
         case 77 :
@@ -389,7 +389,7 @@ void mulai (int u,
     ) ;
     
     if (count)
-    {
+    { /*Update*/
       l = jalan (
         1, &pala, papan, w
       ) ;
@@ -415,7 +415,7 @@ void mulai (int u,
     cetak (
       papan, score, h, w, mode
     ) ;
-    Sleep (50) ;
+    Sleep (50) ; /*Delay*/
   }
   while (play) ;
   

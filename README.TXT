@@ -4,7 +4,7 @@
  * / /__/ / / _ \/ *\         *
  * \_____/ / /__/ /\/         *
  *  ULER \ \_____/            *
- *   GAME \___/ v1.0.0-beta   *
+ *   GAME \___/ v1.0.0        *
  *                            *
  *        (c) 2019 NizhamPihe *
  *-=----=----=----=----=----=-*/
@@ -51,6 +51,19 @@ GAMEPLAY
     - ASCII Block Graphic
     - Pause Button
 
+CHANGE LOG
+==========
+
+  v1.0.0 [First Release]
+  (February 1, 2019)
+  ======================
+    - First Proper Release
+
+  v1.0.0-beta
+  (February 1, 2019)
+  ==================
+    - Beta Release
+
 CONTRIBUTING
 ============
     Terbuka untuk segala
@@ -65,7 +78,7 @@ INFORMATION
 ===========
   App Name   = Uler Game
   File Name  = ULER.C
-  Version    = v1.0.0-beta
+  Version    = v1.0.0
   Update     = February 1, 2019
   Category   = GAME
   Genre      = ARCADE
@@ -77,3 +90,6 @@ INFORMATION
 COPYRIGHT
 =========
   Copyright (c) 2019, NizhamPihe
+  Released Under The MIT License
+  See LICENSE.TXT for full
+  details
