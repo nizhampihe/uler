@@ -4,7 +4,7 @@
  * / /__/ / / _ \/ *\         *
  * \_____/ / /__/ /\/         *
  *  ULER \ \_____/            *
- *   GAME \___/ v1.0.1        *
+ *   GAME \___/ v1.0.2        *
  *                            *
  *        (c) 2019 NizhamPihe *
  *-=----=----=----=----=----=-*/
@@ -44,17 +44,25 @@ GAMEPLAY
   =======
     - Panah : Jalan
     - P     : Pause
+    - R     : Restart
     - Esc   : Keluar
 
   FEATURES
   ========
     - ASCII Block Graphic
+    - Restart Button
     - Pause Button
     - Play Again
     - High Score
 
 CHANGE LOG
 ==========
+
+  v1.0.2
+  (February 1, 2019)
+  ==================
+    - Restart Button
+    - Bug Fixes
 
   v1.0.1
   (February 1, 2019)
@@ -87,14 +95,14 @@ INFORMATION
 ===========
   App Name   = Uler Game
   File Name  = ULER.C
-  Version    = v1.0.1
+  Version    = v1.0.2
   Update     = February 1, 2019
   Category   = GAME
   Genre      = ARCADE
   Platform   = WINDOWS CONSOLE
                (Command Prompt)
-  App Size   = 137224 bytes
-  Code Lines = 529 lines
+  App Size   = 137272 bytes
+  Code Lines = 609 lines
 
 COPYRIGHT
 =========

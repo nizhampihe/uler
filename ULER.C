@@ -4,7 +4,7 @@
  * / /__/ / / _ \/ *\         *
  * \_____/ / /__/ /\/         *
  *  ULER \ \_____/            *
- *   GAME \___/ v1.0.1        *
+ *   GAME \___/ v1.0.2        *
  *                            *
  *        (c) 2019 NizhamPihe *
  *-=----=----=----=----=----=-*/
@@ -30,7 +30,9 @@ typedef enum
 {
   awal,
   maen,
-  pause,
+  paul,
+  paur,
+  paus,
   goy,
   gon,
   over
@@ -173,7 +175,9 @@ void cetak (ITM *papan,
           j += 8 ;
         }
         else if (
-          mode == pause &&
+          (mode == paul ||
+          mode == paur ||
+          mode == paus) &&
           (i == h / 2 ||
           i == h / 2 - 1) &&
           j == w / 2 - 2
@@ -183,7 +187,18 @@ void cetak (ITM *papan,
           j += 4 ;
         }
         else if (
-          mode == goy &&
+          mode == paul &&
+          (i == h / 2 + 2 ||
+          i == h / 2 + 1) &&
+          j == w / 2 - 4
+        )
+        {
+          printf ("Lanjutkan") ;
+          j += 8 ;
+        }
+        else if (
+          (mode == goy ||
+          mode == paur) &&
           (i == h / 2 + 2 ||
           i == h / 2 + 1) &&
           j == w / 2 - 2
@@ -193,7 +208,8 @@ void cetak (ITM *papan,
           j += 4 ;
         }
         else if (
-          mode == gon &&
+          (mode == gon ||
+          mode == paus) &&
           (i == h / 2 + 2 ||
           i == h / 2 + 1) &&
           j == w / 2 - 3
@@ -229,13 +245,14 @@ void cetak (ITM *papan,
   switch (mode)
   {
     case awal :
-      printf ("Panah : Jalan") ;
+      printf (
+        "Panah : Jalan       "
+      ) ;
       break ;
     case maen :
       printf ("P:Pause |") ;
       printf (" Esc:Keluar") ;
       break ;
-    case pause :
     case over :
       printf (
         "Press any key . . . "
@@ -243,6 +260,9 @@ void cetak (ITM *papan,
       break ;
     case goy :
     case gon :
+    case paul :
+    case paur :
+    case paus :
       printf (
         "Enter : Pilih       "
       ) ;
@@ -319,6 +339,61 @@ void berbuah (ITM *papan,
     = buah ;
 }
 
+void pause (ITM *papan,
+            int  score,
+            int *hi,
+            int  h,
+            int  w,
+            int *play,
+            int *restart,
+            MDE *mode)
+{
+  int g ;
+  *mode = paul ;
+  
+  do
+  {
+    up (
+      (h % 2) ? h / 2 + 3 :
+      h / 2 + 2
+    ) ;
+    cetak (
+      papan, score, *hi, h, w,
+      *mode
+    ) ;
+    
+    g = getch () ;
+    switch (g)
+    {
+      case 77 :
+      case 75 :
+      case 72 :
+      case 80 :
+        *mode = (*mode == paus)
+          ? paul : ((*mode ==
+          paul) ? paur : paus) ;
+        break ;
+    }
+  }
+  while (g != 13) ;
+  
+  switch (*mode)
+  {
+    case paul :
+      *mode = maen ;
+      break ;
+    case paur :
+      *play = 0 ;
+      *restart = 1 ;
+      break ;
+    case paus :
+      *play = 0 ;
+      break ;
+    default :
+      break ;
+  }
+}
+
 int mulai (int  u,
            int  h,
            int  w,
@@ -331,6 +406,7 @@ int mulai (int  u,
   int play = 1 ;
   int score = 0 ;
   int count = 0 ;
+  int restart = 0 ;
   
   ITM *papan = (ITM *)
     malloc (
@@ -406,16 +482,16 @@ int mulai (int  u,
             pala.y * w]
             = bawah ;
           break ;
+        case 114 :
+          restart = 1 ;
+          play = 0 ;
+          break ;
         case 112 :
-          up (
-            (h % 2) ? h / 2 +
-            3 : h / 2 + 2
+          pause (
+            papan, score, hi,
+            h, w, &play,
+            &restart, &mode
           ) ;
-          cetak ( 
-            papan , score, *hi,
-            h, w, pause
-          ) ;
-          getch () ;
           break ;
         case 27 :
           play = 0 ;
@@ -465,37 +541,41 @@ int mulai (int  u,
   }
   while (play) ;
   
-  do
+  if (!restart && mode != paus)
   {
-    g = getch () ;
-    switch (g)
+    do
     {
-      case 77 :
-      case 75 :
-      case 72 :
-      case 80 :
-        mode = (mode == goy) ?
-          gon : goy ;
-        break ;
+      g = getch () ;
+      switch (g)
+      {
+        case 77 :
+        case 75 :
+        case 72 :
+        case 80 :
+          mode = (mode == goy) ?
+            gon : goy ;
+          break ;
+      }
+      
+      up (
+        (h % 2) ? h / 2 + 3 :
+        h / 2 + 2
+      ) ;
+      cetak (
+        papan, score, *hi, h, w,
+        mode
+      ) ;
     }
-    
-    up (
-      (h % 2) ? h / 2 + 3 :
-      h / 2 + 2
-    ) ;
-    cetak (
-      papan, score, *hi, h, w,
-      mode
-    ) ;
+    while (g != 13) ;
   }
-  while (g != 13) ;
   
   up (
       (h % 2) ? h / 2 + 3 :
       h / 2 + 2
   ) ;
   
-  if (mode == goy) a = 1 ;
+  if (mode == goy || restart)
+    a = 1 ;
   else
   {
     cetak (
