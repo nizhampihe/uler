@@ -4,7 +4,7 @@
  * / /__/ / / _ \/ *\         *
  * \_____/ / /__/ /\/         *
  *  ULER \ \_____/            *
- *   GAME \___/ v1.0.0        *
+ *   GAME \___/ v1.0.1        *
  *                            *
  *        (c) 2019 NizhamPihe *
  *-=----=----=----=----=----=-*/
@@ -31,7 +31,9 @@ typedef enum
   awal,
   maen,
   pause,
-  gameover
+  goy,
+  gon,
+  over
 } MDE ;
 
 typedef enum
@@ -122,15 +124,24 @@ void terminasi ()
 
 void cetak (ITM *papan,
             int  score,
+            int  hi,
             int  h,
             int  w,
             MDE  mode)
 { /*Menampilkan Layar*/
-  int i, j, s = 4 ;
+  int i, j, s = 4, r = 4 ;
   ITM a, b ;
   
   char scr[] = "00000" ;
-  printf ("Score : ") ;
+  char his[] = "00000" ;
+  printf ("Hi    : ") ;
+  while (hi > 0)
+  {
+    his [r] = hi % 10 + 48 ;
+    hi /= 10 ;
+    r-- ;
+  }
+  printf ("%s\nScore : ", his) ;
   while (score > 0)
   {
     scr [s] = score % 10 + 48 ;
@@ -150,7 +161,9 @@ void cetak (ITM *papan,
         * w] ;
         
         if (
-          mode == gameover &&
+          (mode == goy || 
+          mode == gon ||
+          mode == over) &&
           (i == h / 2 ||
           i == h / 2 - 1) &&
           j == w /2 - 4
@@ -168,6 +181,26 @@ void cetak (ITM *papan,
         {
           printf ("Pause") ;
           j += 4 ;
+        }
+        else if (
+          mode == goy &&
+          (i == h / 2 + 2 ||
+          i == h / 2 + 1) &&
+          j == w / 2 - 2
+        )
+        {
+          printf ("Ulang") ;
+          j += 4 ;
+        }
+        else if (
+          mode == gon &&
+          (i == h / 2 + 2 ||
+          i == h / 2 + 1) &&
+          j == w / 2 - 3
+        )
+        {
+          printf ("Selesai") ;
+          j += 6 ;
         }
         else printf (
           "%c",
@@ -203,9 +236,15 @@ void cetak (ITM *papan,
       printf (" Esc:Keluar") ;
       break ;
     case pause :
-    case gameover :
+    case over :
       printf (
         "Press any key . . . "
+      ) ;
+      break ;
+    case goy :
+    case gon :
+      printf (
+        "Enter : Pilih       "
       ) ;
       break ;
   }
@@ -280,11 +319,12 @@ void berbuah (ITM *papan,
     = buah ;
 }
 
-void mulai (int u,
-            int h,
-            int w)
+int mulai (int  u,
+           int  h,
+           int  w,
+           int *hi)
 {
-  int i, j ;
+  int i, j, g, a ;
   ITM l ;
   
   MDE mode = awal ;
@@ -319,7 +359,8 @@ void mulai (int u,
     {i + 1, pala.y} ;
   berbuah (papan, h, w) ;
   cetak (
-    papan, score, h, w, mode
+    papan, score, *hi, h, w,
+    mode
   ) ;
   
   mode = maen ;
@@ -368,24 +409,26 @@ void mulai (int u,
         case 112 :
           up (
             (h % 2) ? h / 2 +
-            2 : h / 2 + 1
+            3 : h / 2 + 2
           ) ;
           cetak ( 
-            papan , score,
+            papan , score, *hi,
             h, w, pause
           ) ;
           getch () ;
           break ;
         case 27 :
           play = 0 ;
-          mode = gameover ;
+          mode = goy ;
+          *hi = (*hi < score) ?
+            score : *hi ;
           break ;
       }
     }
     
     up (
-      (h % 2) ? h / 2 + 2 :
-      h / 2 + 1
+      (h % 2) ? h / 2 + 3 :
+      h / 2 + 2
     ) ;
     
     if (count)
@@ -397,7 +440,9 @@ void mulai (int u,
       if (l >= 1 && l <= 5)
       {
         play = 0 ;
-        mode = gameover ;
+        mode = goy ;
+        *hi = (*hi < score) ?
+          score : *hi ;
       }
       else if (l == 6)
       {
@@ -413,13 +458,56 @@ void mulai (int u,
     else count++ ;
     
     cetak (
-      papan, score, h, w, mode
+      papan, score, *hi, h, w,
+      mode
     ) ;
     Sleep (50) ; /*Delay*/
   }
   while (play) ;
   
+  do
+  {
+    g = getch () ;
+    switch (g)
+    {
+      case 77 :
+      case 75 :
+      case 72 :
+      case 80 :
+        mode = (mode == goy) ?
+          gon : goy ;
+        break ;
+    }
+    
+    up (
+      (h % 2) ? h / 2 + 3 :
+      h / 2 + 2
+    ) ;
+    cetak (
+      papan, score, *hi, h, w,
+      mode
+    ) ;
+  }
+  while (g != 13) ;
+  
+  up (
+      (h % 2) ? h / 2 + 3 :
+      h / 2 + 2
+  ) ;
+  
+  if (mode == goy) a = 1 ;
+  else
+  {
+    cetak (
+      papan, score, *hi, h, w,
+      over
+    ) ;
+    a = 0 ;
+  }
+  
   free (papan) ;
+  
+  return a ;
 }
 
 /*-=----=----=----=----=----=-*/
@@ -428,7 +516,14 @@ void uler (int u,
            int h,
            int w)
 {
+  int l, hi = 0 ;
+  
   inisiasi () ;
-  mulai (u, h + 2, w + 2) ;
+  
+  do l = mulai (
+    u, h + 2, w + 2, &hi
+  ) ;
+  while (l) ;
+  
   terminasi () ;
 }
