@@ -4,7 +4,7 @@
  * / /__/ / / _ \/ *\         *
  * \_____/ / /__/ /\/         *
  *  ULER \ \_____/            *
- *   GAME \___/ v1.1.1        *
+ *   GAME \___/ v1.1.2        *
  *                            *
  *        (c) 2019 NizhamPihe *
  *-=----=----=----=----=----=-*/
@@ -52,6 +52,7 @@ GAMEPLAY
     - ASCII Block Graphic
     - Command Line Configuration
     - Infinite mode
+    - Difficulty
     - Restart Button
     - Pause Button
     - Play Again
@@ -59,11 +60,14 @@ GAMEPLAY
 
 COMMAND LINE CONFIGURATION
 ==========================
-  usage : uler [/i] [/s <height>
+  usage : uler [/i] [/d <e/m/h>]
+               [/s <height>
                <widht>] [/?]
 
   /i      Mengaktifkan Infinite
           Mode
+  /d      Mengatur Tingkat
+          Kesulitan (see below)
   /s      Mengatur Ukuran Papan
           (see below)
   /?      Melihat Bantuan
@@ -90,9 +94,28 @@ COMMAND LINE CONFIGURATION
            tingginya saja maka
            lebar akan dianggap
            sama dengan tingginya
+         - Tingkat kesulitan
+           dilihat dari
+           kecepatan gerak ular
+         - Terdapat 3 tingkat
+           kesulitan yaitu
+           e -> easy (5 p/s)
+           m -> medium (10 p/s)
+           h -> hard (20 p/s)
+         - Jika /d tidak
+           ditetapkan maka
+           tingkat kesulitan
+           menjadi default easy
 
 CHANGE LOG
 ==========
+
+  v1.1.2
+  (February 1, 2019)
+  ==================
+    - Add Difficulty
+      Configurartion
+    - Bug Fixes
 
   v1.1.1
   (February 1, 2019)
@@ -144,14 +167,14 @@ INFORMATION
 ===========
   App Name   = Uler Game
   File Name  = ULER.C
-  Version    = v1.1.1
+  Version    = v1.1.2
   Update     = February 1, 2019
   Category   = GAME
   Genre      = ARCADE
   Platform   = WINDOWS CONSOLE
                (Command Prompt)
-  App Size   = 152764 bytes
-  Code Lines = 787 lines
+  App Size   = 151228 bytes
+  Code Lines = 841 lines
 
 COPYRIGHT
 =========

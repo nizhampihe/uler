@@ -4,7 +4,7 @@
  * / /__/ / / _ \/ *\         *
  * \_____/ / /__/ /\/         *
  *  ULER \ \_____/            *
- *   GAME \___/ v1.1.1        *
+ *   GAME \___/ v1.1.2        *
  *                            *
  *        (c) 2019 NizhamPihe *
  *-=----=----=----=----=----=-*/
@@ -53,6 +53,7 @@ typedef struct
 {
   int height ;
   int widht ;
+  int diff ;
   int infi ;
   int error ;
 } SET ;
@@ -149,8 +150,16 @@ void clier (char *str)
 { /*Command Help*/
   int i ;
   printf (
-    "usage : %s [/i] [/s "
-    "<height>\n        ", str
+    "usage : %s [/i] [/d "
+    "<e/m/h>]\n        ", str
+  ) ;
+  for (
+    i = 0 ; str [i] != 0 ;
+    i++
+  )
+    printf (" ") ;
+  printf (
+    " [/s <height>\n        "
   ) ;
   for (
     i = 0 ; str [i] != 0 ;
@@ -162,6 +171,9 @@ void clier (char *str)
     "/i      Mengaktifkan "
     "Infinite\n"
     "        Mode\n"
+    "/d      Mengatur Tingkat\n"
+    "        Kesulitan (see"
+    " below)\n"
     "/s      Mengatur Ukuran"
     " Papan\n"
     "        (see below)\n"
@@ -203,6 +215,26 @@ void clier (char *str)
     " dianggap\n"
     "         sama dengan"
     " tingginya\n"
+    "       - Tingkat"
+    " kesulitan\n"
+    "         dilihat dari\n"
+    "         kecepatan gerak"
+    " ular\n"
+    "       - Terdapat 3"
+    " tingkat\n"
+    "         kesulitan yaitu\n"
+    "         e -> easy (5"
+    " p/s)\n"
+    "         m -> medium (10"
+    " p/s)\n"
+    "         h -> hard (20"
+    " p/s)\n"
+    "       - Jika /d tidak\n"
+    "         ditetapkan maka\n"
+    "         tingkat"
+    " kesulitan\n"
+    "         menjadi default"
+    " easy\n"
   ) ;
 }
 
@@ -248,7 +280,7 @@ SET args (int   argc,
           char *argv[])
 { /*Argument Setting*/
   SET set = (SET) {
-    9, 9, 0, 0
+    9, 9, 50, 0, 0
   } ;
   
   for (
@@ -263,6 +295,28 @@ SET args (int   argc,
       {
         case 'i' :
           set.infi = 1 ;
+          break ;case 'd' :
+          if (argc > i + 1)
+          if (
+            argv [i + 1][1] == 0
+          )
+          switch (
+            argv [i + 1][0]
+          )
+          {
+            case 'e' :
+              set.diff = 100 ;
+              i++ ;
+              break ;
+            case 'm' :
+              set.diff = 50 ;
+              i++ ;
+              break ;
+            case 'h' :
+              set.diff = 10 ;
+              i++ ;
+              break ;
+          }
           break ;
         case 's' :
           set = getsize (
@@ -711,7 +765,7 @@ int mulai (int  u,
       papan, score, *hi, h, w,
       mode
     ) ;
-    Sleep (50) ; /*Delay*/
+    Sleep (set.diff) ; /*Delay*/
   }
   while (play) ;
   
