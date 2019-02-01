@@ -4,7 +4,7 @@
  * / /__/ / / _ \/ *\         *
  * \_____/ / /__/ /\/         *
  *  ULER \ \_____/            *
- *   GAME \___/ v1.1.0        *
+ *   GAME \___/ v1.1.1        *
  *                            *
  *        (c) 2019 NizhamPihe *
  *-=----=----=----=----=----=-*/
@@ -59,14 +59,46 @@ GAMEPLAY
 
 COMMAND LINE CONFIGURATION
 ==========================
-  usage : uler [/i] [/?]
-  
+  usage : uler [/i] [/s <height>
+               <widht>] [/?]
+
   /i      Mengaktifkan Infinite
           Mode
+  /s      Mengatur Ukuran Papan
+          (see below)
   /?      Melihat Bantuan
+
+  NOTE : - Ukuran pada /s diukur
+           dalam satuan pixel
+           dihiung dari dalam
+           tembok
+         - Ukuran minimum yang
+           dapat ditetapkan
+           adalah 9 x 9 pixel
+           dengan ukuran
+           maksimum 20 x 20
+           pixel
+         - Semakin besar ukuran
+           akan memperlambat
+           jalannya program
+         - Jika /s tidak
+           ditetapkan maka
+           ukuran menjadi
+           default 9 x 9 pixel
+         - Jika /s hanya
+           menetapkan
+           tingginya saja maka
+           lebar akan dianggap
+           sama dengan tingginya
 
 CHANGE LOG
 ==========
+
+  v1.1.1
+  (February 1, 2019)
+  ==================
+    - Add Size Configurartion
+    - Bug Fixes
 
   v1.1.0 [Command Update]
   (February 1, 2019)
@@ -112,14 +144,14 @@ INFORMATION
 ===========
   App Name   = Uler Game
   File Name  = ULER.C
-  Version    = v1.1.0
+  Version    = v1.1.1
   Update     = February 1, 2019
   Category   = GAME
   Genre      = ARCADE
   Platform   = WINDOWS CONSOLE
                (Command Prompt)
-  App Size   = 152238 bytes
-  Code Lines = 686 lines
+  App Size   = 152764 bytes
+  Code Lines = 787 lines
 
 COPYRIGHT
 =========

@@ -4,7 +4,7 @@
  * / /__/ / / _ \/ *\         *
  * \_____/ / /__/ /\/         *
  *  ULER \ \_____/            *
- *   GAME \___/ v1.1.0        *
+ *   GAME \___/ v1.1.1        *
  *                            *
  *        (c) 2019 NizhamPihe *
  *-=----=----=----=----=----=-*/
@@ -51,6 +51,8 @@ typedef enum
 
 typedef struct
 {
+  int height ;
+  int widht ;
   int infi ;
   int error ;
 } SET ;
@@ -130,23 +132,123 @@ void terminasi ()
 
 /*-=----=----=----=----=----=-*/
 
+int angka (char *str)
+{ /*String ke Integer*/
+  int i = 0 ;
+  int a = 0 ;
+  while (str [i] != 0)
+  {
+    a *= 10 ;
+    a += str [i] - 48 ;
+    i++ ;
+  }
+  return a ;
+}
+
 void clier (char *str)
 { /*Command Help*/
+  int i ;
   printf (
-    "usage : %s [/i] [/?]\n\n"
+    "usage : %s [/i] [/s "
+    "<height>\n        ", str
+  ) ;
+  for (
+    i = 0 ; str [i] != 0 ;
+    i++
+  )
+    printf (" ") ;
+  printf (
+    " <widht>] [/?]\n\n"
     "/i      Mengaktifkan "
     "Infinite\n"
     "        Mode\n"
-    "/?      Melihat Bantuan\n",
-    str
+    "/s      Mengatur Ukuran"
+    " Papan\n"
+    "        (see below)\n"
+    "/?      Melihat"
+    " Bantuan\n\n"
+    "NOTE : - Ukuran pada /s"
+    " diukur\n"
+    "         dalam satuan"
+    " pixel\n"
+    "         dihiung dari"
+    " dalam\n"
+    "         tembok\n"
+    "       - Ukuran minimum"
+    " yang\n"
+    "         dapat"
+    " ditetapkan\n"
+    "         adalah 9 x 9"
+    " pixel\n"
+    "         dengan ukuran\n"
+    "         maksimum"
+    " 20 x 20\n"
+    "         pixel\n"
+    "       - Semakin besar"
+    " ukuran\n"
+    "         akan"
+    " memperlambat\n"
+    "         jalannya"
+    " program\n"
+    "       - Jika /s tidak\n"
+    "         ditetapkan maka\n"
+    "         ukuran menjadi\n"
+    "         default 9 x 9"
+    " pixel\n"
+    "       - Jika /s hanya\n"
+    "         menetapkan\n"
+    "         tingginya saja"
+    " maka\n"
+    "         lebar akan"
+    " dianggap\n"
+    "         sama dengan"
+    " tingginya\n"
   ) ;
+}
+
+SET getsize (SET  set,
+             int  *i,
+             int  argc,
+             char *argv[])
+{ /*Mngambil Ukuran*/
+  int a = set.height ;
+  int b = set.widht ;
+  if (argc > *i + 1)
+  if (
+    argv [*i + 1][0] >= 48 &&
+    argv [*i + 1][0] <= 57
+  )
+  {
+    a = angka (argv [*i + 1]) ;
+    a = (a < 9) ?  9 : (
+      (a > 20) ? 20 : a) ;
+    (*i)++ ;
+    if (argc > *i + 1)
+    if (
+      argv [*i + 1][0] >= 48 &&
+      argv [*i + 1][0] <= 57
+    )
+    {
+      b = angka (
+        argv [*i + 1]
+      ) ;
+      b = (b < 9) ?  9 : (
+        (b > 20) ? 20 : b) ;
+      (*i)++ ;
+    }
+    else b = a ;
+    else b = a ;
+  }
+  set.height = a ;
+  set.widht = b ;
+  return set ;
 }
 
 SET args (int   argc,
           char *argv[])
 { /*Argument Setting*/
   SET set = (SET) {
-    0, 0
+    9, 9, 0, 0
   } ;
   
   for (
@@ -161,6 +263,11 @@ SET args (int   argc,
       {
         case 'i' :
           set.infi = 1 ;
+          break ;
+        case 's' :
+          set = getsize (
+            set, &i, argc, argv
+          ) ;
           break ;
         case '?' :
           set.error = 1 ;
@@ -459,12 +566,12 @@ void pause (ITM *papan,
 }
 
 int mulai (int  u,
-           int  h,
-           int  w,
            int *hi,
            SET  set)
 {
   int i, j, g, a ;
+  int h = set.height + 2 ;
+  int w = set.widht + 2 ;
   ITM l ;
   
   MDE mode = awal ;
@@ -662,11 +769,7 @@ int mulai (int  u,
 void uler (int   argc,
            char *argv[])
 {
-  int l, hi = 0 ;
-  
-  int u = 3 ;
-  int h = 9 ;
-  int w = 9 ;
+  int l, u = 3, hi = 0 ;
   
   SET set = args (argc, argv) ;
   
@@ -676,9 +779,7 @@ void uler (int   argc,
   {
     inisiasi () ;
     
-    do l = mulai (
-      u, h + 2, w + 2, &hi, set
-    ) ;
+    do l = mulai (u, &hi, set) ;
     while (l) ;
     
     terminasi () ;
