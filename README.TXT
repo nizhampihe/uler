@@ -4,7 +4,7 @@
  * / /__/ / / _ \/ *\         *
  * \_____/ / /__/ /\/         *
  *  ULER \ \_____/            *
- *   GAME \___/ v1.0.2        *
+ *   GAME \___/ v1.1.0        *
  *                            *
  *        (c) 2019 NizhamPihe *
  *-=----=----=----=----=----=-*/
@@ -50,13 +50,30 @@ GAMEPLAY
   FEATURES
   ========
     - ASCII Block Graphic
+    - Command Line Configuration
+    - Infinite mode
     - Restart Button
     - Pause Button
     - Play Again
     - High Score
 
+COMMAND LINE CONFIGURATION
+==========================
+  usage : uler [/i] [/?]
+  
+  /i      Mengaktifkan Infinite
+          Mode
+  /?      Melihat Bantuan
+
 CHANGE LOG
 ==========
+
+  v1.1.0 [Command Update]
+  (February 1, 2019)
+  =======================
+    - Add Infinite Mode
+    - Command Line Configuration
+    - Bug Fixes
 
   v1.0.2
   (February 1, 2019)
@@ -95,14 +112,14 @@ INFORMATION
 ===========
   App Name   = Uler Game
   File Name  = ULER.C
-  Version    = v1.0.2
+  Version    = v1.1.0
   Update     = February 1, 2019
   Category   = GAME
   Genre      = ARCADE
   Platform   = WINDOWS CONSOLE
                (Command Prompt)
-  App Size   = 137272 bytes
-  Code Lines = 609 lines
+  App Size   = 152238 bytes
+  Code Lines = 686 lines
 
 COPYRIGHT
 =========

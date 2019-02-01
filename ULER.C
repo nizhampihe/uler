@@ -4,17 +4,17 @@
  * / /__/ / / _ \/ *\         *
  * \_____/ / /__/ /\/         *
  *  ULER \ \_____/            *
- *   GAME \___/ v1.0.2        *
+ *   GAME \___/ v1.1.0        *
  *                            *
  *        (c) 2019 NizhamPihe *
  *-=----=----=----=----=----=-*/
 
-void uler (int, int, int) ;
+void uler (int ,char **) ;
 
 int main (int   argc,
           char *argv[])
 {
-  uler (3, 9, 9) ;
+  uler (argc, argv) ;
   return 0 ;
 }
 
@@ -48,6 +48,12 @@ typedef enum
   bawah,
   buah
 } ITM ;
+
+typedef struct
+{
+  int infi ;
+  int error ;
+} SET ;
 
 typedef struct
 {
@@ -123,6 +129,50 @@ void terminasi ()
 }
 
 /*-=----=----=----=----=----=-*/
+
+void clier (char *str)
+{ /*Command Help*/
+  printf (
+    "usage : %s [/i] [/?]\n\n"
+    "/i      Mengaktifkan "
+    "Infinite\n"
+    "        Mode\n"
+    "/?      Melihat Bantuan\n",
+    str
+  ) ;
+}
+
+SET args (int   argc,
+          char *argv[])
+{ /*Argument Setting*/
+  SET set = (SET) {
+    0, 0
+  } ;
+  
+  for (
+    int i = 1 ; i < argc ; i++
+  )
+  {
+    if (
+      argv [i][0] == '/' &&
+      argv [i][2] == 0
+    )
+      switch (argv [i][1])
+      {
+        case 'i' :
+          set.infi = 1 ;
+          break ;
+        case '?' :
+          set.error = 1 ;
+          break ;
+        default :
+          set.error = 1 ;
+      }
+    else set.error = 1 ;
+  }
+  
+  return set ;
+}
 
 void cetak (ITM *papan,
             int  score,
@@ -273,7 +323,9 @@ void cetak (ITM *papan,
 ITM jalan (int  a,
            LOC *loc,
            ITM *papan,
-           int  w)
+           int  h,
+           int  w,
+           int  infi)
 { /*Gerak Ular*/
   ITM b ;
   LOC temp = *loc ;
@@ -283,16 +335,28 @@ ITM jalan (int  a,
   )
   {
     case kanan :
-      loc->x++ ;
+      if (
+        infi && loc->x == w - 2
+      ) loc->x = 1 ;
+      else loc->x++ ;
       break ;
     case kiri :
-      loc->x-- ;
+      if (
+        infi && loc->x == 1
+      ) loc->x = w - 2 ;
+      else loc->x-- ;
       break ;
     case atas :
-      loc->y-- ;
+      if (
+        infi && loc->y == 1
+      ) loc->y = h - 2 ;
+      else loc->y-- ;
       break ;
     case bawah :
-      loc->y++ ;
+      if (
+        infi && loc->y == h - 2
+      ) loc->y = 1 ;
+      else loc->y++ ;
       break ;
     default :
       break ;
@@ -397,7 +461,8 @@ void pause (ITM *papan,
 int mulai (int  u,
            int  h,
            int  w,
-           int *hi)
+           int *hi,
+           SET  set)
 {
   int i, j, g, a ;
   ITM l ;
@@ -510,7 +575,8 @@ int mulai (int  u,
     if (count)
     { /*Update*/
       l = jalan (
-        1, &pala, papan, w
+        1, &pala, papan, h, w,
+        set.infi
       ) ;
       
       if (l >= 1 && l <= 5)
@@ -526,7 +592,8 @@ int mulai (int  u,
         berbuah (papan, h, w) ;
       }
       else jalan (
-        0, &ekor, papan, w
+        0, &ekor, papan, h, w,
+        set.infi
       ) ;
       
       count = 0 ;
@@ -592,18 +659,28 @@ int mulai (int  u,
 
 /*-=----=----=----=----=----=-*/
 
-void uler (int u,
-           int h,
-           int w)
+void uler (int   argc,
+           char *argv[])
 {
   int l, hi = 0 ;
   
-  inisiasi () ;
+  int u = 3 ;
+  int h = 9 ;
+  int w = 9 ;
   
-  do l = mulai (
-    u, h + 2, w + 2, &hi
-  ) ;
-  while (l) ;
+  SET set = args (argc, argv) ;
   
-  terminasi () ;
+  if (set.error)
+    clier (argv [0]) ;
+  else
+  {
+    inisiasi () ;
+    
+    do l = mulai (
+      u, h + 2, w + 2, &hi, set
+    ) ;
+    while (l) ;
+    
+    terminasi () ;
+  }
 }
