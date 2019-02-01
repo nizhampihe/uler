@@ -4,7 +4,7 @@
  * / /__/ / / _ \/ *\         *
  * \_____/ / /__/ /\/         *
  *  ULER \ \_____/            *
- *   GAME \___/ v1.1.2        *
+ *   GAME \___/ v1.2.0        *
  *                            *
  *        (c) 2019 NizhamPihe *
  *-=----=----=----=----=----=-*/
@@ -53,6 +53,7 @@ typedef struct
 {
   int height ;
   int widht ;
+  int color ;
   int diff ;
   int infi ;
   int error ;
@@ -89,14 +90,30 @@ void up (int h)
   ) ;
 }
 
-void inisiasi ()
+void warna (int color)
+{ /*Mengatur Warna*/
+  SetConsoleTextAttribute (
+    GetStdHandle (
+      STD_OUTPUT_HANDLE
+    ), color
+  ) ;
+}
+
+int inisiasi ()
 { /*Awal Program*/
   CONSOLE_CURSOR_INFO cinfo ;
+  CONSOLE_SCREEN_BUFFER_INFO
+  csbi ;
   
   GetConsoleCursorInfo (
     GetStdHandle (
       STD_OUTPUT_HANDLE
     ), &cinfo
+  ) ;
+  GetConsoleScreenBufferInfo (
+    GetStdHandle (
+      STD_OUTPUT_HANDLE
+    ), &csbi
   ) ;
   
   cinfo.bVisible = FALSE ;
@@ -109,9 +126,11 @@ void inisiasi ()
       STD_OUTPUT_HANDLE
     ), &cinfo
   ) ;
+  
+  return csbi.wAttributes ;
 }
 
-void terminasi ()
+void terminasi (int color)
 { /*Akhir Program*/
   CONSOLE_CURSOR_INFO cinfo ;
   
@@ -128,6 +147,8 @@ void terminasi ()
       STD_OUTPUT_HANDLE
     ), &cinfo
   ) ;
+  
+  warna (color) ;
   getch () ;
 }
 
@@ -146,6 +167,25 @@ int angka (char *str)
   return a ;
 }
 
+int waritm (ITM a)
+{
+  switch (a)
+  {
+    case dinding :
+      return 15 ;
+    case kanan :
+    case kiri :
+    case atas :
+    case bawah :
+      return 10 ;
+    case buah :
+      return 12 ;
+    default :
+      return 0 ;
+  }
+  return 0 ;
+}
+
 void clier (char *str)
 { /*Command Help*/
   int i ;
@@ -159,7 +199,8 @@ void clier (char *str)
   )
     printf (" ") ;
   printf (
-    " [/s <height>\n        "
+    " [/c] [/s <height>\n"
+    "        "
   ) ;
   for (
     i = 0 ; str [i] != 0 ;
@@ -174,6 +215,8 @@ void clier (char *str)
     "/d      Mengatur Tingkat\n"
     "        Kesulitan (see"
     " below)\n"
+    "/c      Menonaktifkan"
+    " Warna\n"
     "/s      Mengatur Ukuran"
     " Papan\n"
     "        (see below)\n"
@@ -238,9 +281,9 @@ void clier (char *str)
   ) ;
 }
 
-SET getsize (SET  set,
+SET getsize (SET   set,
              int  *i,
-             int  argc,
+             int   argc,
              char *argv[])
 { /*Mngambil Ukuran*/
   int a = set.height ;
@@ -280,7 +323,7 @@ SET args (int   argc,
           char *argv[])
 { /*Argument Setting*/
   SET set = (SET) {
-    9, 9, 50, 0, 0
+    9, 9, 1, 50, 0, 0
   } ;
   
   for (
@@ -295,7 +338,8 @@ SET args (int   argc,
       {
         case 'i' :
           set.infi = 1 ;
-          break ;case 'd' :
+          break ;
+        case 'd' :
           if (argc > i + 1)
           if (
             argv [i + 1][1] == 0
@@ -317,6 +361,9 @@ SET args (int   argc,
               i++ ;
               break ;
           }
+          break ;
+        case 'c' :
+          set.color = 0 ;
           break ;
         case 's' :
           set = getsize (
@@ -340,6 +387,7 @@ void cetak (ITM *papan,
             int  hi,
             int  h,
             int  w,
+            int  col,
             MDE  mode)
 { /*Menampilkan Layar*/
   int i, j, s = 4, r = 4 ;
@@ -347,14 +395,23 @@ void cetak (ITM *papan,
   
   char scr[] = "00000" ;
   char his[] = "00000" ;
-  printf ("Hi    : ") ;
+  if (col) warna (11) ;
+  printf ("Hi   ") ;
+  if (col) warna (9) ;
+  printf (" : ") ;
+  if (col) warna (13) ;
   while (hi > 0)
   {
     his [r] = hi % 10 + 48 ;
     hi /= 10 ;
     r-- ;
   }
-  printf ("%s\nScore : ", his) ;
+  printf ("%s\n", his) ;
+  if (col) warna (11) ;
+  printf ("Score") ;
+  if (col) warna (9) ;
+  printf (" : ") ;
+  if (col) warna (13) ;
   while (score > 0)
   {
     scr [s] = score % 10 + 48 ;
@@ -382,6 +439,7 @@ void cetak (ITM *papan,
           j == w /2 - 4
         )
         {
+          if (col) warna (14) ;
           printf ("Game Over") ;
           j += 8 ;
         }
@@ -394,6 +452,7 @@ void cetak (ITM *papan,
           j == w / 2 - 2
         )
         {
+          if (col) warna (14) ;
           printf ("Pause") ;
           j += 4 ;
         }
@@ -404,6 +463,7 @@ void cetak (ITM *papan,
           j == w / 2 - 4
         )
         {
+          if (col) warna (14) ;
           printf ("Lanjutkan") ;
           j += 8 ;
         }
@@ -415,6 +475,7 @@ void cetak (ITM *papan,
           j == w / 2 - 2
         )
         {
+          if (col) warna (14) ;
           printf ("Ulang") ;
           j += 4 ;
         }
@@ -426,15 +487,29 @@ void cetak (ITM *papan,
           j == w / 2 - 3
         )
         {
+          if (col) warna (14) ;
           printf ("Selesai") ;
           j += 6 ;
         }
-        else printf (
-          "%c",
-          (a > 0) ? ((b > 0) ?
-          219 : 223) : ((b > 0)
-          ? 220 : 32)
-        ) ;
+        else 
+        {
+          if (col)
+          {
+            warna (
+              waritm (a) |
+              waritm (b) << 4
+            ) ;
+            printf (
+              "%c", 223
+            ) ;
+          }
+          else printf (
+            "%c", (a > 0) ?
+            ((b > 0) ? 219 :
+            223) : ((b > 0)
+            ? 220 : 32)
+          ) ;
+        }
       }
     }
     if (i % 2)
@@ -444,7 +519,12 @@ void cetak (ITM *papan,
       for (j = 0 ; j < w ; j++)
       {
         a = papan [j + i * w] ;
-        printf (
+        if (col)
+        {
+          warna (waritm (a)) ;
+          printf ("%c", 223) ;
+        }
+        else printf (
           "%c", (a > 0) ? 223 :
           32
         ) ;
@@ -456,15 +536,31 @@ void cetak (ITM *papan,
   switch (mode)
   {
     case awal :
-      printf (
-        "Panah : Jalan       "
-      ) ;
+      if (col) warna (11) ;
+      printf ("Panah") ;
+      if (col) warna (13) ;
+      printf (" : ") ;
+      if (col) warna (11) ;
+      printf ("Jalan       ") ;
       break ;
     case maen :
-      printf ("P:Pause |") ;
-      printf (" Esc:Keluar") ;
+      if (col) warna (11) ;
+      printf ("P") ;
+      if (col) warna (13) ;
+      printf (":") ;
+      if (col) warna (11) ;
+      printf ("Pause") ;
+      if (col) warna (9) ;
+      printf (" | ") ;
+      if (col) warna (11) ;
+      printf ("Esc") ;
+      if (col) warna (13) ;
+      printf (":") ;
+      if (col) warna (11) ;
+      printf ("Keluar") ;
       break ;
     case over :
+      if (col) warna (11) ;
       printf (
         "Press any key . . . "
       ) ;
@@ -474,9 +570,12 @@ void cetak (ITM *papan,
     case paul :
     case paur :
     case paus :
-      printf (
-        "Enter : Pilih       "
-      ) ;
+      if (col) warna (11) ;
+      printf ("Enter") ;
+      if (col) warna (13) ;
+      printf (" : ") ;
+      if (col) warna (11) ;
+      printf ("Pilih       ") ;
       break ;
   }
 }
@@ -569,6 +668,7 @@ void pause (ITM *papan,
             int *hi,
             int  h,
             int  w,
+            int  col,
             int *play,
             int *restart,
             MDE *mode)
@@ -584,7 +684,7 @@ void pause (ITM *papan,
     ) ;
     cetak (
       papan, score, *hi, h, w,
-      *mode
+      col, *mode
     ) ;
     
     g = getch () ;
@@ -662,7 +762,7 @@ int mulai (int  u,
   berbuah (papan, h, w) ;
   cetak (
     papan, score, *hi, h, w,
-    mode
+    set.color, mode
   ) ;
   
   mode = maen ;
@@ -715,8 +815,9 @@ int mulai (int  u,
         case 112 :
           pause (
             papan, score, hi,
-            h, w, &play,
-            &restart, &mode
+            h, w, set.color,
+            &play, &restart,
+            &mode
           ) ;
           break ;
         case 27 :
@@ -763,7 +864,7 @@ int mulai (int  u,
     
     cetak (
       papan, score, *hi, h, w,
-      mode
+      set.color, mode
     ) ;
     Sleep (set.diff) ; /*Delay*/
   }
@@ -791,7 +892,7 @@ int mulai (int  u,
       ) ;
       cetak (
         papan, score, *hi, h, w,
-        mode
+        set.color, mode
       ) ;
     }
     while (g != 13) ;
@@ -808,7 +909,7 @@ int mulai (int  u,
   {
     cetak (
       papan, score, *hi, h, w,
-      over
+      set.color, over
     ) ;
     a = 0 ;
   }
@@ -823,7 +924,7 @@ int mulai (int  u,
 void uler (int   argc,
            char *argv[])
 {
-  int l, u = 3, hi = 0 ;
+  int l, col, u = 3, hi = 0 ;
   
   SET set = args (argc, argv) ;
   
@@ -831,11 +932,11 @@ void uler (int   argc,
     clier (argv [0]) ;
   else
   {
-    inisiasi () ;
+    col = inisiasi () ;
     
     do l = mulai (u, &hi, set) ;
     while (l) ;
     
-    terminasi () ;
+    terminasi (col) ;
   }
 }
